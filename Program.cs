@@ -7,46 +7,52 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        // OAuth Configuration
-        var clientId = "1m4pmh2zfs4hc8w2xsu16ghnnmiekzc";
-        var clientSecret = "a08501208fbb8030078097fea0da7eb5547bb57fc08fa6af5a69ca5428d73ec1";
-        var AccountUUID = "072f7c4e-066f-4887-bd8a-590a38fb718d";
-        var redirectUri = "http://localhost/oauth";
-
-        var oauthService = new BigCommerceOAuthService(clientId, clientSecret, redirectUri);
-
-        // Step 1: Get authorization URL
-        var authUrl = oauthService.GetAuthorizationUrl();
-        Console.WriteLine("Visit this URL to authorize:");
-        Console.WriteLine(authUrl);
-        Console.WriteLine();
-
-        // Step 2: After user authorizes, you'll receive code, context, and scope in callback
-        Console.WriteLine("Enter the authorization code:");
-        var code = Console.ReadLine();
-        
-        Console.WriteLine("Enter the context (store hash):");
-        var context = Console.ReadLine();
-        
-        Console.WriteLine("Enter the scope:");
-        var scope = Console.ReadLine();
-
         try
         {
+            string clientid = "9dfvw7w2hdcaa2f4p258ur0jng1aimq";
+            string clientsecret = "b867a0c92ec18a0284c7e66eb21c3780ff9fb97fcca15c67ac9755b49cf939c4";
             // Step 3: Exchange code for access token
-            var tokenResponse = await oauthService.ExchangeCodeForTokenAsync(code, context, scope);
-            Console.WriteLine($"Access Token: {tokenResponse.access_token}");
-            Console.WriteLine($"Store Hash: {tokenResponse.context}");
-            Console.WriteLine();
-
             // Step 4: Use the access token to make API calls
-            var storeHash = tokenResponse.context.Replace("stores/", "");
-            var apiClient = new BigCommerceApiClient(storeHash, tokenResponse.access_token);
+            Console.WriteLine("Enter the context (store hash):");
+            var context = Console.ReadLine();
 
-            Console.WriteLine("Fetching products...");
-            var products = await apiClient.GetAsync<ProductsResponse>("catalog/products");
-            Console.WriteLine($"Total products: {products.Data.Count}");
-            Console.WriteLine("API calls completed successfully!");
+            var storeHash = context;// tokenResponse.context.Replace("stores/", "");
+            string access_token = "726idlafywsm5bim5pisza0zhja0w5a";
+
+            Console.WriteLine("Enter the store hash:");
+            
+            Console.WriteLine("Enter the access token:");
+           // var accessToken = Console.ReadLine();
+            
+            var apiClient = new BigCommerceApiClient(storeHash, access_token);
+            var productService = new ProductService(apiClient);
+
+            Console.WriteLine("\n=== BigCommerce Product Integration ===");
+            Console.WriteLine("1. Fetch products and cache to CSV");
+            Console.WriteLine("2. Insert sample products from CSV");
+            Console.WriteLine("3. Both (Fetch then Insert)");
+            Console.Write("Select option: ");
+            var option = Console.ReadLine();
+
+            if (option == "1" || option == "3")
+            {
+                Console.WriteLine("\nFetching products from BigCommerce...");
+                var products = await productService.FetchAllProductsAsync();
+                Console.WriteLine($"Fetched {products.Count} products");
+                
+                var cacheFile = "bigcommerce_products_cache.csv";
+                productService.CacheProductsToCsv(products, cacheFile);
+                Console.WriteLine($"✓ Products cached to {cacheFile}");
+            }
+
+            if (option == "2" || option == "3")
+            {
+                Console.WriteLine("\nInserting sample products...");
+                var responses = await productService.BulkInsertProductsFromCsvAsync("sample_products.csv");
+                Console.WriteLine($"\n✓ Inserted {responses.Count} products successfully");
+            }
+
+            Console.WriteLine("\nCompleted!");
         }
         catch (Exception ex)
         {

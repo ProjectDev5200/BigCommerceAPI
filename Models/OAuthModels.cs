@@ -15,7 +15,8 @@ public class OAuthTokenResponse
 {
     public string access_token { get; set; }
     public string scope { get; set; }
-    public int user_id { get; set; }
-    public string user_email { get; set; }
+    public dynamic user { get; set; }
+    public dynamic owner { get; set; }
     public string context { get; set; }
+    public string account_uuid { get; set; }
 }

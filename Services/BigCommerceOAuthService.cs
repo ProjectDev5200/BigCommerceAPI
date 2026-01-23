@@ -19,7 +19,7 @@ public class BigCommerceOAuthService
         _redirectUri = redirectUri;
     }
 
-    public string GetAuthorizationUrl(string scope = "store_v2_products store_v2_orders store_inventory store_locations")
+    public string GetAuthorizationUrl(string scope = "store_v2_products")
     {
         return $"{AuthUrl}?client_id={_clientId}&redirect_uri={Uri.EscapeDataString(_redirectUri)}&response_type=code&scope={Uri.EscapeDataString(scope)}";
     }
