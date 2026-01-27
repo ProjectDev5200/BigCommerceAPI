@@ -63,7 +63,7 @@ public class ShippingAddress
     public string Country { get; set; }
 }
 
-public class OrderResponse
+public class FindItpartsOrderResponse
 {
     public string OrderId { get; set; }
     public string Status { get; set; }

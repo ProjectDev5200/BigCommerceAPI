@@ -1,0 +1,499 @@
+@page
+@model DetailsModel
+@{
+    ViewData["Title"] = Model.Product?.Description ?? "Product Details";
+}
+
+<div class="detail-container">
+    <div class="breadcrumb">
+        <a href="/">← Back to Search</a>
+    </div>
+
+    @if (Model.Product != null)
+    {
+        <div class="product-detail">
+            <div class="detail-left">
+                <div class="image-section">
+                    <img src="@Model.Product.ImageUrl" alt="@Model.Product.Description" />
+                </div>
+                @if (Model.Product.Tags != null && Model.Product.Tags.Any())
+                {
+                    <div class="tags-section">
+                        @foreach (var tag in Model.Product.Tags)
+                        {
+                            <span class="tag">@tag</span>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="detail-right">
+                <div class="header-section">
+                    <div class="manufacturer">@Model.Product.Manufacturer</div>
+                    <h1 class="product-title">@Model.Product.Description</h1>
+                    <div class="part-number">Part Number: <strong>@Model.Product.PartNumber</strong></div>
+                </div>
+
+                <div class="pricing-section">
+                    <div class="price-box">
+                        <div class="price-label">Core Price</div>
+                        <div class="core-price">$@Model.Product.CorePrice.ToString("N2")</div>
+                    </div>
+                    <div class="price-box highlight">
+                        <div class="price-label">Your Account Price</div>
+                        <div class="account-price">$@Model.Product.AccountPrice.ToString("N2")</div>
+                        <div class="savings">Save $@((Model.Product.CorePrice - Model.Product.AccountPrice).ToString("N2"))</div>
+                    </div>
+                </div>
+
+                <div class="stock-section">
+                    <span class="stock-badge @(Model.Product.Quantity > 10 ? "in-stock" : "low-stock")">
+                        @Model.Product.InventoryStatus
+                    </span>
+                    <span class="quantity">Available: @Model.Product.Quantity units</span>
+                </div>
+
+                @if (Model.Product.Variants != null && Model.Product.Variants.Any())
+                {
+                    var variant = Model.Product.Variants.First();
+                    <div class="shipping-info">
+                        <div class="info-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                            </svg>
+                            <span>Ships from: @variant.Location</span>
+                        </div>
+                        <div class="info-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                            </svg>
+                            <span>Ships in: @variant.EstimatedShipDays business days</span>
+                        </div>
+                    </div>
+                }
+
+                <div class="action-section">
+                    <div class="qty-selector">
+                        <button onclick="decrementQty()">-</button>
+                        <input type="number" id="quantity" value="1" min="1" max="@Model.Product.Quantity" />
+                        <button onclick="incrementQty(@Model.Product.Quantity)">+</button>
+                    </div>
+                    <button class="add-cart-btn" onclick="addToCart('@Model.Product.Id', '@Model.Product.PartNumber', '@Model.Product.Description', @Model.Product.AccountPrice)">
+                        Add to Cart
+                    </button>
+                </div>
+
+                @if (Model.Product.PiesAttributes != null)
+                {
+                    <div class="specs-section">
+                        <h2 class="section-title">PIES Technical Specifications</h2>
+                        <div class="specs-grid">
+                            <div class="spec-row">
+                                <span class="spec-label">Part Type:</span>
+                                <span class="spec-value">@Model.Product.PiesAttributes.PartType</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Position:</span>
+                                <span class="spec-value">@Model.Product.PiesAttributes.Position</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Weight:</span>
+                                <span class="spec-value">@Model.Product.PiesAttributes.Weight</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Dimensions:</span>
+                                <span class="spec-value">@Model.Product.PiesAttributes.Dimensions</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Material:</span>
+                                <span class="spec-value">@Model.Product.PiesAttributes.Material</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Country of Origin:</span>
+                                <span class="spec-value">@Model.Product.PiesAttributes.CountryOfOrigin</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-label">Part Terminology ID:</span>
+                                <span class="spec-value">@Model.Product.PiesAttributes.PartTerminologyId</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<div id="notification" class="notification"></div>
+
+<style>
+@@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #F5F5F5;
+    margin: 0;
+    padding: 0;
+}
+
+.detail-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.breadcrumb {
+    margin-bottom: 30px;
+}
+
+.breadcrumb a {
+    color: #931310;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.product-detail {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 40px;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.detail-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.image-section {
+    background: #F5F5F5;
+    border-radius: 8px;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.image-section img {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.tags-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag {
+    background: #931310;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.detail-right {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.manufacturer {
+    color: #931310;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.product-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #353838;
+    margin: 10px 0;
+    line-height: 1.3;
+}
+
+.part-number {
+    color: #666;
+    font-size: 1.1rem;
+    font-family: monospace;
+}
+
+.pricing-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.price-box {
+    background: #F5F5F5;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+}
+
+.price-box.highlight {
+    background: #931310;
+    color: white;
+    border: none;
+}
+
+.price-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    opacity: 0.9;
+}
+
+.core-price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-decoration: line-through;
+    color: #999;
+}
+
+.account-price {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+}
+
+.savings {
+    margin-top: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+}
+
+.stock-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    background: #F5F5F5;
+    border-radius: 8px;
+}
+
+.stock-badge {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.in-stock {
+    background: #d4edda;
+    color: #155724;
+}
+
+.low-stock {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.quantity {
+    color: #353838;
+    font-weight: 600;
+}
+
+.shipping-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    background: #F5F5F5;
+    border-radius: 8px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #353838;
+    font-weight: 500;
+}
+
+.info-item svg {
+    color: #931310;
+}
+
+.action-section {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.qty-selector {
+    display: flex;
+    align-items: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.qty-selector button {
+    background: #F5F5F5;
+    border: none;
+    padding: 15px 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: #353838;
+}
+
+.qty-selector button:hover {
+    background: #e0e0e0;
+}
+
+.qty-selector input {
+    border: none;
+    width: 70px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 15px 10px;
+}
+
+.add-cart-btn {
+    flex: 1;
+    background: #931310;
+    color: white;
+    border: none;
+    padding: 18px 40px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.add-cart-btn:hover {
+    background: #7a0f0d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(147, 19, 16, 0.3);
+}
+
+.specs-section {
+    padding: 25px;
+    background: #F5F5F5;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #353838;
+    margin-bottom: 20px;
+}
+
+.specs-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.spec-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.spec-row:last-child {
+    border-bottom: none;
+}
+
+.spec-label {
+    font-weight: 600;
+    color: #666;
+}
+
+.spec-value {
+    color: #353838;
+    font-weight: 500;
+}
+
+.notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #931310;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(147, 19, 16, 0.3);
+    display: none;
+    font-weight: 600;
+    z-index: 1000;
+}
+
+.notification.show {
+    display: block;
+    animation: slideIn 0.3s;
+}
+
+@@keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@@media (max-width: 968px) {
+    .product-detail {
+        grid-template-columns: 1fr;
+    }
+    
+    .pricing-section {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+function incrementQty(max) {
+    const input = document.getElementById('quantity');
+    if (parseInt(input.value) < max) {
+        input.value = parseInt(input.value) + 1;
+    }
+}
+
+function decrementQty() {
+    const input = document.getElementById('quantity');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+function addToCart(id, partNum, desc, price) {
+    const qty = parseInt(document.getElementById('quantity').value);
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existing = cart.find(item => item.id === id);
+    
+    if (existing) {
+        existing.quantity += qty;
+    } else {
+        cart.push({ id, partNum, desc, price, quantity: qty });
+    }
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    const notif = document.getElementById('notification');
+    notif.textContent = `Added ${qty} x ${partNum} to cart`;
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 3000);
+}
+</script>

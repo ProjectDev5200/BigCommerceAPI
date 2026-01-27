@@ -1,0 +1,12 @@
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\FindItParts.Searchparts.exe
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\appsettings.Development.json
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\appsettings.json
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\FindItParts.Searchparts.dll
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\FindItParts.Searchparts.deps.json
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\FindItParts.Searchparts.runtimeconfig.json
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\FindItParts.Searchparts.pdb
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\Microsoft.IdentityModel.Abstractions.dll
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\Microsoft.IdentityModel.Logging.dll
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\Microsoft.IdentityModel.Tokens.dll
+D:\Ramprudvi\AvrhilProjects\BigCommereceAPI\FindItParts.Searchparts\obj\Release\net8.0\PubTmp\Out\System.IdentityModel.Tokens.Jwt.dll
